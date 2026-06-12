@@ -22,8 +22,14 @@ jobs:
       - name: Build and export static site
         working-directory: ./frontend
         run: |
-          npm run build
-          npm run export
+          echo "NODE: $(node -v)";
+          echo "NPM: $(npm -v)";
+          pwd; ls -la;
+          npm run build --if-present;
+          echo "build exit:$?";
+          npm run export --if-present;
+          echo "export exit:$?";
+          echo "out dir listing:"; ls -la ./out || true;
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
