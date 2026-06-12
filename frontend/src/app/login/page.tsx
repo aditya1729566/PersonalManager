@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react";
+import api from "@/lib/api";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -12,25 +13,23 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     try {
-        const path = register ? "/api/register" : "/api/login";
-        const res = await fetch(path, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-          credentials: "include",
-      });
-      if (res.ok) {
+        let ok = false;
         if (register) {
-          // after register, switch to login mode
-          setRegister(false);
-          setError("Registered successfully — please sign in");
+          ok = await api.register(username, password);
+          if (ok) {
+            setRegister(false);
+            setError("Registered successfully — please sign in");
+          } else {
+            setError("Registration failed");
+          }
         } else {
-          window.location.href = "/";
+          ok = await api.login(username, password);
+          if (ok) {
+            window.location.href = "/";
+          } else {
+            setError("Login failed");
+          }
         }
-      } else {
-        const data = await res.json();
-        setError(data.detail || "Login failed");
-      }
     } catch (err) {
       setError("Network error");
     }

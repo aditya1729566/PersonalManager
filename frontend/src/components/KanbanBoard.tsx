@@ -14,6 +14,7 @@ import {
 import { KanbanColumn } from "@/components/KanbanColumn";
 import { KanbanCardPreview } from "@/components/KanbanCardPreview";
 import { createId, initialData, moveCard, type BoardData } from "@/lib/kanban";
+import api from "@/lib/api";
 
 export const KanbanBoard = () => {
   const [board, setBoard] = useState<BoardData>(() => initialData);
@@ -23,16 +24,12 @@ export const KanbanBoard = () => {
 
   useEffect(() => {
     let mounted = true;
-    fetch(`/api/kanban`, { credentials: "include" })
-      .then((r) => {
-        if (!r.ok) throw new Error("unauth");
-        return r.json();
-      })
+    api
+      .getKanban()
       .then((data) => {
         if (mounted) setBoard(data as BoardData);
       })
       .catch(() => {
-        // if unauthorized or error, redirect to login
         window.location.href = "/login";
       });
     return () => {
@@ -50,12 +47,7 @@ export const KanbanBoard = () => {
       window.clearTimeout(saveTimer.current);
     }
     saveTimer.current = window.setTimeout(() => {
-      fetch(`/api/kanban`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(board),
-        credentials: "include",
-      }).catch(() => {
+      api.saveKanban(board).catch(() => {
         /* ignore */
       });
     }, 600);

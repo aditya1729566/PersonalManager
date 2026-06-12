@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import api from "@/lib/api";
 import { KanbanBoard } from "@/components/KanbanBoard";
 
 export default function Home() {
@@ -8,12 +9,9 @@ export default function Home() {
 
   useEffect(() => {
     let mounted = true;
-    fetch(`/api/session`, { credentials: "include" })
-      .then((r) => {
-        if (!r.ok) throw new Error("unauth");
-        return r.json();
-      })
-      .then(() => {
+    api.getSession()
+      .then((user) => {
+        if (!user) throw new Error("unauth");
         if (mounted) setLoading(false);
       })
       .catch(() => {
