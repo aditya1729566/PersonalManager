@@ -1,0 +1,11 @@
+fastapi>=0.95.0
+uvicorn[standard]>=0.22.0
+aiofiles>=23.1.0
+httpx>=0.24.0
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+coverage>=7.0.0
+pytest-cov>=4.0.0
+sqlalchemy>=2.0.0
+databases>=0.7.0
+aiosqlite>=0.18.0
